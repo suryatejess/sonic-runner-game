@@ -1,5 +1,6 @@
 import k from "../kaplayCtx";
 import { makeSonic } from "../entities/sonic";
+import { makeMotoBug } from "../entities/motobug";
 
 export default function game() {
   k.setGravity(3100);
@@ -36,11 +37,51 @@ export default function game() {
   const sonic = makeSonic(k.vec2(200, 845));
   sonic.setControls();
   sonic.setEvents();
+  sonic.onCollide("enemy", (enemy) => {
+    if (!sonic.isGrounded()) {
+      k.play("destroy", { volume: 0.5 });
+      k.play("hyper-ring", { volume: 0.5 });
+      k.destroy(enemy);
+      sonic.play("jump");
+      sonic.jump();
+      // TODO
+      return;
+    }
+
+    k.play("hurt", { volume: 0.5 });
+    // TODO
+    k.go("gameover");
+  });
 
   let gameSpeed = 300;
   k.loop(1, () => {
     gameSpeed += 50;
   });
+
+  const spawnMotoBug = () => {
+    const motobug = makeMotoBug(k.vec2(1920, 773));
+    motobug.onUpdate(() => {
+      if (gameSpeed < 3000) {
+        motobug.move(-(gameSpeed + 300), 0);
+        return;
+      }
+
+      motobug.move();
+    });
+
+    motobug.onExitScreen(() => {
+      if (motobug.pos.x < 0) {
+        k.destroy(motobug);
+      }
+    });
+
+    const waitTime = k.rand(0.5, 2.5);
+    k.wait(waitTime, () => {
+      spawnMotoBug();
+    });
+  };
+
+  spawnMotoBug();
 
   k.add([
     k.rect(1920, 300),
