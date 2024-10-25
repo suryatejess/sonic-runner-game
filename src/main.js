@@ -1,6 +1,7 @@
 import k from "./kaplayCtx.js";
 import game from "./scenes/game";
 import mainMenu from "./scenes/mainMenu.js";
+import gameover from "./scenes/gameover.js";
 
 // Loading assets
 k.loadSprite("chemical-bg", "graphics/chemical-bg.png"); // you dont need to mention "public" when the assets are in the "public" folder
@@ -37,6 +38,6 @@ k.loadSound("city", "sounds/city.mp3");
 
 k.scene("main-menu", mainMenu);
 k.scene("game", game);
-k.scene("gameover", () => {});
+k.scene("gameover", gameover);
 
 k.go("main-menu");
